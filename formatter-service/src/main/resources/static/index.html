@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Styles to make things look a bit better -->
+		<style>
+			body { font-family: sans-serif; }
+			form, #output {
+				display: inline-block;
+				vertical-align: top;
+			}
+			form > * {
+				vertical-align: middle;
+			}
+			#output {
+				border: solid 1px black;
+				overflow: auto;
+			}
+			textarea, #output {
+				font-size: 12px;
+				font-family: monospace;
+				width: 40em;
+				height: 40em;
+				padding: 0.5em;
+				margin: 1em 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>Code formatter</h3>
+
+		<!-- This is where the user will type/paste some code -->
+		<form id="codeform" action="formatter/format">
+			<textarea id="code" name="code"></textarea>
+			<input type="submit" value="Format >>"/>
+		</form>
+
+		<!-- This is where the output will go -->
+		<pre id="output"></pre>
+
+		<!-- This Javascript code will handle sending the code and reporting the response -->
+		<script>
+			var form = document.querySelector('#codeform');
+			var output = document.querySelector('#output');
+
+			// When the user clicks the "Format" button...
+			form.addEventListener('submit', function (event) {
+				// Prevent the browser's default submit action
+				event.preventDefault();
+
+				// Initialize a new request
+				var request = new XMLHttpRequest();
+				request.open('POST', form.action);
+				request.setRequestHeader('Content-Type', 'application/json');
+
+				// When the request finishes, copy the response text into the output area
+				request.addEventListener('load', function () {
+					output.textContent = this.responseText;
+				});
+
+				// Send the code to format to the server
+				request.send(JSON.stringify({ code: form.code.value }));
+			});
+		</script>
+	</body>
+</html>
